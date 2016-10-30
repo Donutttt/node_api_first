@@ -8,16 +8,6 @@ mongoose.connect('mongodb://localhost:27017');
 //a model for mongo
 var Test = mongoose.model('Test', { message: String });
 
-//to test if we can save to the db
-var firstTest = new Test({message: 'Hello, world!'});
-firstTest.save(function(err){
-    if (err){
-        console.log(err);
-    }else{
-        console.log('saved correctly');
-    }
-});
-
 //setup to use body parser
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
@@ -27,13 +17,6 @@ var port = process.env.PORT || 8080;
 
 var router = express.Router(); //returns an instance of express router
 
-//middleware to handle all requests
-//router.use(function(){
-//    console.log('Something is happening');
-//    next();
-//});
-
-
 //just a test route
 router.get('/', function(req, res){
     res.json({ message: 'this is a test' });
@@ -41,14 +24,12 @@ router.get('/', function(req, res){
 
 router.route('/tests')
     .post(function(req, res){
-        console.dir(req.body);
         var test = new Test({ message: req.body.message });
 
         test.save(function(err){
             if (err){
                 res.json({ message: 'error' });
             } else {
-                console.log('test created');
                 res.json({ message: 'test created' });
             }
         });
@@ -95,4 +76,3 @@ router.route('/tests/:test_id')
 app.use('/api', router);
 
 app.listen(port);
-console.log('listening on port %s', port);
